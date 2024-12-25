@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Trends</title>
+    <script>
+        async function runSeleniumScript() {
+            const response = await fetch('/run-script', { method: 'POST' });
+            const data = await response.json();
+
+            const resultsDiv = document.getElementById('results');
+            const currentDateTime = data.dateTime;
+
+            // Create the list of trends dynamically
+            const trendList = data.top5Trends.map(trend => `<li>${trend}</li>`).join('');
+
+            // Display the result
+            resultsDiv.innerHTML = `
+                <h3>These are the most happening topics as on ${currentDateTime}</h3>
+                <ul>${trendList}</ul>
+                <p>The IP address used for this query was ${data.ipAddress}.</p>
+                <h4>Here’s a JSON extract of this record from the MongoDB:</h4>
+                <pre>${JSON.stringify(data.mongoRecord, null, 2)}</pre>
+                <button onclick="runSeleniumScript()">Click here to run the query again</button>
+            `;
+        }
+    </script>
+</head>
+<body>
+    <h1>Twitter Trending Topics</h1>
+    <button onclick="runSeleniumScript()">Fetch Trends</button>
+    <div id="results"></div>
+</body>
+</html>
